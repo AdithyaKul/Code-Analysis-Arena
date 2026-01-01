@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logging Out - Code Debate Arena</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Logout Animation -->
+    <div class="logout-overlay" style="display: flex;">
+        <div class="logout-content">
+            <div class="planet-animation">🌍</div>
+            <h3>Returning to Earth...</h3>
+            <p id="logoutMessage">Contacting ISRO Mission Control...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="logoutProgress"></div>
+            </div>
+            <p>Securely logging you out of Code Debate Arena</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Logout elements
+            const logoutMessage = document.getElementById('logoutMessage');
+            const logoutProgress = document.getElementById('logoutProgress');
+            
+            // Enhanced logout messages with space theme
+            const logoutMessages = [
+                "CONTACTING ISRO MISSION CONTROL...",
+                "PREPARING RETURN JOURNEY TO EARTH...",
+                "CALCULATING OPTIMAL TRAJECTORY...",
+                "BOOKING TICKETS BACK TO EARTH...",
+                "INITIATING RE-ENTRY SEQUENCE...",
+                "DESCENDING THROUGH ATMOSPHERE...",
+                "TOUCHDOWN! WELCOME BACK TO EARTH!",
+                "REDIRECTING TO HOMEPAGE..."
+            ];
+            
+            // Animate progress bar with enhanced effect
+            logoutProgress.style.width = '0%';
+            setTimeout(() => {
+                logoutProgress.style.transition = 'width 3s cubic-bezier(0.4, 0, 0.2, 1)';
+                logoutProgress.style.width = '100%';
+            }, 100);
+            
+            // Cycle through logout messages with timing
+            let messageIndex = 0;
+            const logoutMessageInterval = setInterval(() => {
+                if (messageIndex < logoutMessages.length) {
+                    logoutMessage.textContent = logoutMessages[messageIndex];
+                    logoutMessage.style.opacity = 0;
+                    
+                    // Fade in effect
+                    setTimeout(() => {
+                        logoutMessage.style.transition = 'opacity 0.5s ease';
+                        logoutMessage.style.opacity = 1;
+                    }, 50);
+                    
+                    messageIndex++;
+                } else {
+                    clearInterval(logoutMessageInterval);
+                }
+            }, 400);
+            
+            // Redirect after animation completes
+            setTimeout(() => {
+                window.location.href = 'auth.html';
+            }, 3500);
+        });
+        
+        // Custom cursor functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursor = document.querySelector('.custom-cursor');
+            const follower = document.querySelector('.cursor-follower');
+            
+            if (cursor && follower) {
+                let posX = 0, posY = 0;
+                let mouseX = 0, mouseY = 0;
+                
+                // Track mouse movement
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    
+                    // Move cursor immediately
+                    cursor.style.left = mouseX + 'px';
+                    cursor.style.top = mouseY + 'px';
+                });
+                
+                // Animate follower with delay
+                const animateFollower = () => {
+                    posX += (mouseX - posX) / 5;
+                    posY += (mouseY - posY) / 5;
+                    
+                    follower.style.left = posX + 'px';
+                    follower.style.top = posY + 'px';
+                    
+                    requestAnimationFrame(animateFollower);
+                };
+                
+                animateFollower();
+                
+                // Hover effects
+                const hoverElements = document.querySelectorAll('button, a, input, .btn-primary, .btn-social, .btn-auto-login, .icon-btn, .submit-btn, .copy-btn, .nav-item, .cta-primary, .cta-secondary, .feature-card, .persona-card, .stat-card, .tech-item');
+                
+                hoverElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        cursor.classList.add('hover');
+                        follower.classList.add('hover');
+                    });
+                    
+                    el.addEventListener('mouseleave', () => {
+                        cursor.classList.remove('hover');
+                        follower.classList.remove('hover');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

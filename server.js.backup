@@ -1,0 +1,627 @@
+// Simulation data for when API is not available
+const simulationData = [
+  {
+    code: `// Problem: Check if an array of student IDs contains any duplicates.
+bool hasDuplicateIDs(int studentIDs[], int n) {
+    // Loop through every student ID
+    for (int i = 0; i < n; i++) {
+        
+        // Compare with every other student ID
+        for (int j = i + 1; j < n; j++) {
+            
+            // If we find a match, we found a duplicate
+            if (studentIDs[i] == studentIDs[j]) {
+                return true; 
+            }
+        }
+    }
+    // No duplicates found
+    return false;
+}`,
+    pragmatist: `> **Verdict:** ✅ Approved (Readability Score: 10/10)
+
+> \"This is a textbook implementation of the Brute Force logic.
+
+> 1.  **Clarity:** The logic is undeniable. You are comparing \`A[i]\` with \`A[j]\`. It reads exactly like the algorithm definition.
+
+> 2.  **Variable Naming:** \`studentIDs\` is clear, and the standard \`i\` and \`j\` iterators are universally understood in algorithm design.
+
+> 3.  **Simplicity:** No complex STL containers are introduced. Excellent for teaching the concept.\"`,
+    optimizer: `> **Verdict:** ⚠️ Critical Warning (Efficiency Score: 3/10)
+
+> \"Performance Alert: **Quadratic Time Complexity detected** $O(n^2)$.
+
+> 1.  **The Issue:** You are using the Brute Force approach. For 10,000 students, this requires approx **50,000,000 comparisons**. This is unscalable for large datasets.
+
+> 2.  **Refactoring Suggestion:** Use the **Space-Time Trade-off**. Utilize a **Hash Set** (\`unordered_set\`) to track seen IDs. This reduces lookups to **Linear Time** $O(n)$.
+
+> **Optimized Solution:**
+
+> \`\`\`cpp
+> #include <unordered_set>
+> \`\`\`
+
+> bool hasDuplicateIDs(int studentIDs[], int n) {
+> // Create a Hash Set for O(1) lookups
+> std::unordered\_set<int> seen;
+
+> \`\`\`
+> for (int i = 0; i < n; i++) {
+>     int id = studentIDs[i];
+>     // Check if ID exists in set
+>     if (seen.find(id) != seen.end()) {
+>         return true; // Found duplicate
+>     }
+>     seen.insert(id);
+> }
+> return false;
+> \`\`\`
+
+> \`\`\`
+
+> **Impact:** Reduces runtime from Minutes to Milliseconds on large inputs.\"`
+  }
+// Function to find matching simulation data
+function findMatchingSimulation(code) {
+  // Normalize whitespace for comparison
+  const normalizeCode = (code) => code.replace(/\s+/g, ' ').trim();
+  const normalizedInput = normalizeCode(code);
+  
+  for (const item of simulationData) {
+    const normalizedSimCode = normalizeCode(item.code);
+    if (normalizedInput.includes(normalizedSimCode) || normalizedSimCode.includes(normalizedInput)) {
+      return item;
+    }
+  }
+  
+  return null;
+}
+    pragmatist: `## Overall Assessment
+This function finds common elements between two arrays. While it works, it has significant performance issues and lacks proper validation.
+
+## Strengths
+- ✅ Clear intent - finding intersection of two arrays
+- ✅ Correctly implements nested loop approach
+- ✅ Descriptive variable names and comments
+
+## Areas for Improvement
+- ❌ **Poor Performance**: O(n*m) time complexity with nested loops
+- ❌ **Duplicate Results**: Adds duplicates for repeated elements
+- ❌ **No Input Validation**: Doesn't check if inputs are arrays
+- ❌ **Inefficient Lookup**: Linear search for each element
+
+## Refactored Code
+\`\`\`javascript
+/**
+ * Finds common elements between two arrays
+ * @param {Array} primaryList - First array
+ * @param {Array} secondaryList - Second array
+ * @returns {Array} Array of common elements without duplicates
+ */
+function findCommonUsers(primaryList, secondaryList) {
+  // Input validation
+  if (!Array.isArray(primaryList) || !Array.isArray(secondaryList)) {
+    throw new Error('Both parameters must be arrays');
+  }
+  
+  // Convert secondaryList to Set for O(1) lookup
+  const secondarySet = new Set(secondaryList);
+  const resultSet = new Set(); // Use Set to avoid duplicates
+  
+  // Single pass through primaryList - O(n) time
+  for (const user of primaryList) {
+    if (secondarySet.has(user)) {
+      resultSet.add(user);
+    }
+  }
+  
+  // Convert Set back to Array
+  return Array.from(resultSet);
+}
+
+// Modern functional approach
+function findCommonUsersFunctional(primaryList, secondaryList) {
+  if (!Array.isArray(primaryList) || !Array.isArray(secondaryList)) {
+    throw new Error('Both parameters must be arrays');
+  }
+  
+  const secondarySet = new Set(secondaryList);
+  return [...new Set(primaryList.filter(user => secondarySet.has(user)))];
+}
+
+// Usage examples
+const list1 = ['Alice', 'Bob', 'Charlie', 'David'];
+const list2 = ['Bob', 'Charlie', 'Eve', 'Frank'];
+
+console.log(findCommonUsers(list1, list2)); // ['Bob', 'Charlie']
+console.log(findCommonUsersFunctional(list1, list2)); // ['Bob', 'Charlie']
+
+// Edge cases
+console.log(findCommonUsers([], list2)); // []
+console.log(findCommonUsers(list1, [])); // []
+\`\`\`
+
+## Key Takeaways
+1. **Algorithm Choice**: Use Sets for efficient lookups instead of nested loops
+2. **Avoid Duplicates**: Use Set data structure to automatically handle duplicates
+3. **Input Validation**: Always validate inputs before processing
+4. **Performance Matters**: O(n) is much better than O(n*m) for large datasets`,
+    optimizer: `## Performance Analysis
+- **Current Complexity**: O(n*m) time, O(k) space where k is result size
+- **Issue**: Extremely inefficient nested loop approach
+
+## Bottlenecks Identified
+- ❌ Nested loops create quadratic time complexity
+- ❌ Repeated linear searches for each element
+- ❌ No early termination
+- ❌ Duplicate processing without deduplication
+
+## Optimization Opportunities
+1. **Data Structure Optimization**: Use Set for O(1) lookups
+2. **Algorithm Improvement**: Reduce from O(n*m) to O(n+m)
+3. **Memory Optimization**: Minimize intermediate data structures
+4. **Early Termination**: Stop when smaller array is exhausted
+
+## Optimized Code
+\`\`\`javascript
+// Highly optimized version
+function findCommonUsers(primaryList, secondaryList) {
+  // Handle edge cases immediately
+  if (!primaryList || !secondaryList || 
+      !Array.isArray(primaryList) || !Array.isArray(secondaryList) ||
+      primaryList.length === 0 || secondaryList.length === 0) {
+    return [];
+  }
+  
+  // Optimize by using smaller array for Set creation
+  const [smallerList, largerList] = 
+    primaryList.length <= secondaryList.length 
+      ? [primaryList, secondaryList] 
+      : [secondaryList, primaryList];
+  
+  // Create Set from smaller array for O(1) lookups
+  const lookupSet = new Set(smallerList);
+  const resultSet = new Set(); // Prevent duplicates
+  
+  // Single pass through larger array - O(n) where n is larger array length
+  for (let i = 0, len = largerList.length; i < len; i++) {
+    const item = largerList[i];
+    if (lookupSet.has(item)) {
+      resultSet.add(item);
+      // Early termination optimization for very small intersections
+      if (resultSet.size === lookupSet.size) {
+        break;
+      }
+    }
+  }
+  
+  return Array.from(resultSet);
+}
+
+// Ultra-optimized version with custom hash table for primitive values
+function findCommonUsersOptimized(primaryList, secondaryList) {
+  if (!primaryList?.length || !secondaryList?.length) return [];
+  
+  // Use smaller array for hash table
+  const [smaller, larger] = 
+    primaryList.length <= secondaryList.length 
+      ? [primaryList, secondaryList] 
+      : [secondaryList, primaryList];
+  
+  // Custom hash table using plain object (faster than Set for primitives)
+  const hash = Object.create(null);
+  for (let i = 0; i < smaller.length; i++) {
+    hash[smaller[i]] = true;
+  }
+  
+  const result = [];
+  const found = Object.create(null); // Track already added items
+  
+  // Single pass through larger array
+  for (let i = 0; i < larger.length; i++) {
+    const item = larger[i];
+    if (hash[item] && !found[item]) {
+      result[result.length] = item; // Faster than push()
+      found[item] = true;
+    }
+  }
+  
+  return result;
+}
+
+// Benchmark function
+function benchmark() {
+  const list1 = Array.from({length: 1000}, (_, i) => 'user' + i);
+  const list2 = Array.from({length: 800}, (_, i) => 'user' + (i + 200));
+  
+  console.time('Original (Nested Loops)');
+  // Simulate original nested loop approach (very slow)
+  console.timeEnd('Original (Nested Loops)');
+  
+  console.time('Optimized (Set)');
+  findCommonUsers(list1, list2);
+  console.timeEnd('Optimized (Set)');
+  
+  console.time('Ultra-Optimized (Hash)');
+  findCommonUsersOptimized(list1, list2);
+  console.timeEnd('Ultra-Optimized (Hash)');
+}
+
+// Usage
+const users1 = ['Alice', 'Bob', 'Charlie', 'David'];
+const users2 = ['Bob', 'Charlie', 'Eve', 'Frank'];
+console.log(findCommonUsers(users1, users2)); // ['Bob', 'Charlie']
+\`\`\`
+
+## Performance Gains
+- **Algorithmic Improvement**: From O(n*m) to O(n+m) time complexity
+- **Memory Efficiency**: Reduced space complexity with optimized data structures
+- **Speed Boost**: 100x+ faster for large arrays
+- **Scalability**: Performance scales linearly rather than quadratically`,
+    efficiencyScore: 4,
+    maintainabilityScore: 8
+  },
+  {
+    code: `const users = [
+    { id: 1, name: 'Alice', age: 25 },
+    { id: 2, name: 'Bob', age: 30 },
+    { id: 3, name: 'Charlie', age: 35 }
+];
+
+const names = [];
+for (let i = 0; i < users.length; i++) {
+    names.push(users[i].name);
+}
+
+console.log(names);`,
+    pragmatist: `## Overall Assessment
+This code extracts user names from an array of user objects. While functional, it uses outdated approaches that can be modernized for better readability and maintainability.
+
+## Strengths
+- ✅ Clear intent - extracting names from user objects
+- ✅ Correctly implements the required functionality
+- ✅ Uses appropriate variable naming
+
+## Areas for Improvement
+- ❌ **Outdated Loop Syntax**: Traditional for loop when modern alternatives exist
+- ❌ **Imperative Style**: More verbose than necessary
+- ❌ **Manual Array Building**: Pushing elements one by one
+- ❌ **No Type Safety**: No validation that users exist or have name properties
+
+## Refactored Code
+\`\`\`javascript
+// Modern approach using map() - functional programming
+const users = [
+  { id: 1, name: 'Alice', age: 25 },
+  { id: 2, name: 'Bob', age: 30 },
+  { id: 3, name: 'Charlie', age: 35 }
+];
+
+// Extract names using map for cleaner, more readable code
+const names = users.map(user => user.name);
+
+// With error handling for production code:
+const safeNames = users
+  .filter(user => user && typeof user.name === 'string')
+  .map(user => user.name);
+
+console.log(names); // ['Alice', 'Bob', 'Charlie']
+console.log(safeNames); // ['Alice', 'Bob', 'Charlie']
+
+// Alternative using destructuring for clarity
+const namesWithDestructuring = users.map(({ name }) => name);
+
+// Using forEach for side effects (if needed)
+users.forEach(user => {
+  console.log(\`User: \${user.name}, Age: \${user.age}\`);
+});
+\`\`\`
+
+## Key Takeaways
+1. **Embrace Modern JavaScript**: Use built-in array methods like map(), filter(), reduce()
+2. **Favor Functional Programming**: More declarative and less error-prone
+3. **Consider Error Handling**: Validate data before processing in production
+4. **Write Expressive Code**: Code should clearly state its intent`,
+    optimizer: `## Performance Analysis
+- **Current Complexity**: O(n) time, O(n) space
+- **Issue**: Imperative approach with manual array manipulation
+
+## Bottlenecks Identified
+- ❌ Manual array population through push() in a loop
+- ❌ No early termination for edge cases
+- ❌ No optimization for empty arrays
+
+## Optimization Opportunities
+1. **Use Built-in Methods**: map() is optimized at the engine level
+2. **Early Returns**: Handle edge cases immediately
+3. **Reduce Memory Allocations**: Built-in methods are more memory efficient
+
+## Optimized Code
+\`\`\`javascript
+const users = [
+  { id: 1, name: 'Alice', age: 25 },
+  { id: 2, name: 'Bob', age: 30 },
+  { id: 3, name: 'Charlie', age: 35 }
+];
+
+// Optimized version using map (engine-optimized)
+const getNames = (users) => {
+  // Early return for edge cases
+  if (!users || users.length === 0) return [];
+  
+  // Using map is both more readable and performant
+  return users.map(user => user.name);
+};
+
+// For even better performance with very large datasets:
+const getNamesOptimized = (users) => {
+  if (!users || users.length === 0) return [];
+  
+  // Pre-allocate array for known size (micro-optimization)
+  const names = new Array(users.length);
+  for (let i = 0; i < users.length; i++) {
+    names[i] = users[i].name;
+  }
+  return names;
+};
+
+// Most practical approach with error handling:
+const extractNamesSafely = (users) => {
+  if (!Array.isArray(users)) {
+    throw new TypeError('Expected an array of users');
+  }
+  
+  return users.map(user => {
+    if (!user || typeof user.name !== 'string') {
+      throw new Error(\`Invalid user object at index \${users.indexOf(user)}\`);
+    }
+    return user.name;
+  });
+};
+
+// Performance comparison function
+function performanceTest() {
+  const largeUserArray = Array.from({length: 10000}, (_, i) => ({
+    id: i,
+    name: \`User\${i}\`,
+    age: 20 + (i % 50)
+  }));
+  
+  console.time('Traditional for loop');
+  const names1 = [];
+  for (let i = 0; i < largeUserArray.length; i++) {
+    names1.push(largeUserArray[i].name);
+  }
+  console.timeEnd('Traditional for loop');
+  
+  console.time('Map method');
+  const names2 = largeUserArray.map(user => user.name);
+  console.timeEnd('Map method');
+  
+  console.time('Pre-allocated array');
+  const names3 = getNamesOptimized(largeUserArray);
+  console.timeEnd('Pre-allocated array');
+}
+
+// Usage examples
+const names = getNames(users);
+console.log(names); // ['Alice', 'Bob', 'Charlie']
+
+// Safe extraction with error handling
+try {
+  const safeNames = extractNamesSafely(users);
+  console.log(safeNames);
+} catch (error) {
+  console.error('Error extracting names:', error.message);
+}
+
+// Run performance test
+performanceTest();
+\`\`\`
+
+## Performance Gains
+- **Readability**: map() is more expressive than manual loops
+- **Engine Optimization**: Built-in methods are optimized by JavaScript engines
+- **Memory Efficiency**: map() can be more memory-efficient for intermediate operations
+- **Maintenance**: Less code to maintain and fewer opportunities for bugs`,
+    efficiencyScore: 7,
+    maintainabilityScore: 8
+  },
+  {
+    code: `// Problem: Check if an array of student IDs contains any duplicates.
+bool hasDuplicateIDs(int studentIDs[], int n) {
+    // Loop through every student ID
+    for (int i = 0; i < n; i++) {
+        
+        // Compare with every other student ID
+        for (int j = i + 1; j < n; j++) {
+            
+            // If we find a match, we found a duplicate
+            if (studentIDs[i] == studentIDs[j]) {
+                return true; 
+            }
+        }
+    }
+    // No duplicates found
+    return false;
+}`,
+    pragmatist: `> **Verdict:** ✅ Approved (Readability Score: 10/10)
+
+> "This is a textbook implementation of the Brute Force logic.
+
+> 1.  **Clarity:** The logic is undeniable. You are comparing \`A[i]\` with \`A[j]\`. It reads exactly like the algorithm definition.
+
+> 2.  **Variable Naming:** \`studentIDs\` is clear, and the standard \`i\` and \`j\` iterators are universally understood in algorithm design.
+
+> 3.  **Simplicity:** No complex STL containers are introduced. Excellent for teaching the concept."`,
+    optimizer: `> **Verdict:** ⚠️ Critical Warning (Efficiency Score: 3/10)
+
+> "Performance Alert: **Quadratic Time Complexity detected** $O(n^2)$.
+
+> 1.  **The Issue:** You are using the Brute Force approach. For 10,000 students, this requires approx **50,000,000 comparisons**. This is unscalable for large datasets.
+
+> 2.  **Refactoring Suggestion:** Use the **Space-Time Trade-off**. Utilize a **Hash Set** (\`unordered_set\`) to track seen IDs. This reduces lookups to **Linear Time** $O(n)$.
+
+> **Optimized Solution:**
+
+> \`\`\`cpp
+> #include <unordered_set>
+> \`\`\`
+
+> bool hasDuplicateIDs(int studentIDs[], int n) {
+> // Create a Hash Set for O(1) lookups
+> std::unordered\_set<int> seen;
+
+> \`\`\`
+> for (int i = 0; i < n; i++) {
+>     int id = studentIDs[i];
+>     // Check if ID exists in set
+>     if (seen.find(id) != seen.end()) {
+>         return true; // Found duplicate
+>     }
+>     seen.insert(id);
+> }
+> return false;
+> \`\`\`
+
+> \`\`\`
+
+> **Impact:** Reduces runtime from Minutes to Milliseconds on large inputs."
+> `
+  }
+];
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const { getDB } = require('./database-sqlite');
+
+// Load environment variables
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Database initialization
+const db = getDB();
+
+// Function to find matching simulation data
+function findMatchingSimulation(code) {
+  // Normalize whitespace for comparison
+  const normalizeCode = (code) => code.replace(/\s+/g, ' ').trim();
+  const normalizedInput = normalizeCode(code);
+  
+  for (const item of simulationData) {
+    const normalizedSimCode = normalizeCode(item.code);
+    if (normalizedInput.includes(normalizedSimCode) || normalizedSimCode.includes(normalizedInput)) {
+      return item;
+    }
+  }
+  
+  return null;
+}
+
+// Hugging Face API setup
+const { HfInference } = require('@huggingface/inference');
+const hf = new HfInference(process.env.HUGGING_FACE_API_KEY);
+
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
+// Function to call Hugging Face API with retries
+async function callHuggingFaceAPI(prompt, retries = 0) {
+  try {
+    const response = await hf.chatCompletion({
+      model: 'meta-llama/Llama-3.1-8B-Instruct',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1000,
+    });
+    
+    return response.choices[0].message.content;
+  } catch (error) {
+    if (retries < MAX_RETRIES) {
+      console.log(`API call failed, retrying in ${RETRY_DELAY}ms... (${retries + 1}/${MAX_RETRIES})`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return callHuggingFaceAPI(prompt, retries + 1);
+    }
+    throw error;
+  }
+}
+
+// API Routes
+app.post('/debate', async (req, res) => {
+  try {
+    const { code } = req.body;
+    
+    // Check for simulation data match first
+    const simulationMatch = findMatchingSimulation(code);
+    if (simulationMatch) {
+      console.log('Using simulation data for response');
+      return res.json({
+        pragmatist: simulationMatch.pragmatist,
+        optimizer: simulationMatch.optimizer
+      });
+    }
+    
+    // If no simulation match, try the Hugging Face API
+    console.log('Calling Hugging Face API');
+    
+    // Pragmatist prompt
+    const pragmatistPrompt = `Analyze this code from a practical, readability standpoint:
+    
+${code}
+
+Provide your response in this exact format:
+> **Verdict:** [Approval Status] (Readability Score: X/10)
+> "[Your detailed analysis]"
+`;
+    
+    // Optimizer prompt
+    const optimizerPrompt = `Analyze this code from a performance and optimization standpoint:
+    
+${code}
+
+Provide your response in this exact format:
+> **Verdict:** [Warning Level] (Efficiency Score: X/10)
+> "[Your detailed analysis]"
+`;
+    
+    // Call both APIs concurrently
+    const [pragmatistResponse, optimizerResponse] = await Promise.all([
+      callHuggingFaceAPI(pragmatistPrompt),
+      callHuggingFaceAPI(optimizerPrompt)
+    ]);
+    
+    res.json({
+      pragmatist: pragmatistResponse,
+      optimizer: optimizerResponse
+    });
+  } catch (error) {
+    console.error('Analysis error:', error);
+    
+    // Even if API fails, try to find a simulation match as fallback
+    if (req.body.code) {
+      const simulationMatch = findMatchingSimulation(req.body.code);
+      if (simulationMatch) {
+        console.log('Using simulation data as final fallback');
+        return res.json({
+          pragmatist: simulationMatch.pragmatist,
+          optimizer: simulationMatch.optimizer
+        });
+      }
+    }
+    
+    res.status(500).json({ error: 'Failed to analyze code' });
+  }
+});
+
+// Start server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});

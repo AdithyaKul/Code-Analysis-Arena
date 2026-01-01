@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Debate Arena - History</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Logout Overlay (Hidden by default) -->
+    <div class="logout-overlay" id="logoutOverlay" style="display: none;">
+        <div class="logout-content">
+            <div class="planet-animation">🌍</div>
+            <h3>Returning to Earth...</h3>
+            <p id="logoutMessage">Contacting ISRO Mission Control...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="logoutProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="landing.html" class="nav-brand">
+                <i class="fas fa-code brand-icon"></i>
+                <span class="brand-name">Code Debate Arena</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span><a href="landing.html" style="text-decoration: none; color: inherit;">Home</a></span>
+                </li>
+                <li class="nav-item active">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </li>
+                <li class="nav-item">
+                    <button class="logout-btn" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="section-header">
+            <div class="logo">
+                <i class="fas fa-history"></i>
+            </div>
+            <h1>Analysis History</h1>
+            <p>Review your previous code analysis sessions</p>
+        </div>
+
+        <section class="input-section">
+            <div class="history-controls">
+                <div class="history-stats" id="historyStats">Loading history...</div>
+                <button class="btn-primary" id="clearHistoryBtn">
+                    <i class="fas fa-trash"></i>
+                    Clear All History
+                </button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Code Debate Arena | College Mini Project 2025-26</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+            <p>Made with <i class="fas fa-heart" style="color: #ff6b6b;"></i> at SaIT</p>
+            <p>Powered by Google Gemini AI & Hugging Face AI <i class="fas fa-brain"></i></p>
+        </div>
+    </footer>
+
+    <script src="history.js"></script>
+</body>
+</html>
